@@ -6,56 +6,66 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     
-    var imageNumber = 0
-    var messageNumber = 0
+    var imageNumber = -1
+    var messageNumber = -1
+    var soundNumber = -1
     let totalNumberOfImages = 9
+    let totalNumberOfSounds = 9
+    var audioPlayer: AVAudioPlayer!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        messageLabel.text = ""
-        print("")
+
+    }
+    
+    func playSound(name: String) {
+        if let sound = NSDataAsset(name: name) {
+        do {
+            try audioPlayer = AVAudioPlayer(data: sound.data)
+            audioPlayer.play()
+        } catch {
+            print("Error: \(error.localizedDescription) Could not AVAudioPlayer object")
+        }
+    } else {
+        print("Error: Could not read data from file sound0")
+        }
+        
+    }
+    
+    func nonRepeatingRandom(originalNumber: Int, upperlimit: Int) -> Int {
+        var newNumber: Int
+        repeat {
+            newNumber = Int.random(in: 0...upperlimit)
+        } while originalNumber == newNumber
+        return newNumber
     }
     
     @IBAction func messageButtonPressed(_ sender: UIButton) {
-        let messages = ["You are Awesome!", "You are Great!", "You are Fantastic!", "Fabulous? That's You!", "When the Genius Bar Needs Help, They Call You!", "You've Got The Design Skills of Jony Ive"]
-        messageLabel.text = messages[Int.random(in: 0...messages.count-1)]
-        imageView.image = UIImage(named: "image\(Int.random(in:0...totalNumberOfImages))")
-        messageLabel.text = messages [messageNumber]
-        messageNumber += 1
-        if messageNumber == messages.count{
-            messageNumber = 0
+        let messages = ["You are Awesome!",
+                        "You are Great!",
+                        "You are Fantastic!",
+                        "Fabulous? That's You!",
+                        "When the Genius Bar Needs Help, They Call You!",
+                        "You've Got The Design Skills of Jony Ive"]
+       
+        messageNumber = nonRepeatingRandom(originalNumber: messageNumber, upperlimit: messages.count-1)
+        messageLabel.text = messages[messageNumber]
+        
+        imageNumber = nonRepeatingRandom(originalNumber: imageNumber, upperlimit: totalNumberOfImages-1)
+        imageView.image = UIImage(named: "image\(imageNumber)")
+        
+        soundNumber = nonRepeatingRandom(originalNumber: soundNumber, upperlimit: totalNumberOfSounds-1)
+        playSound(name: "sound\(soundNumber)")
         }
     
         
-        // let imageName = "image" + String(imageNumber)
-        //let imageName = "image\(imageNumber)"
-        //imageView.image = UIImage(named: imageName)
-        //imageNumber = imageNumber + 1
-        //if imageNumber == 10 {
-           // imageNumber = 0
-        //}
-        
-        
-        
-        //        let awesomeMessage = "You are Awesome!"
-        //        let greatMessage = "You are Great!"
-        //        let bombMessage = "You are Da Bomb!"
-        //
-        //        if messageLabel.text == awesomeMessage {
-        //            messageLabel.text = greatMessage
-        //            imageView.image = UIImage(named: "image3")
-        //        } else if messageLabel.text == greatMessage {
-        //            messageLabel.text = bombMessage
-        //            imageView.image = UIImage(named: "image2")
-        //        } else {
-        //                messageLabel.text = awesomeMessage
-        //                imageView.image = UIImage(named: "image0")
-        //        }
     }
     
-}
+
 
